@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background1"
+    android:orientation="vertical">
+
+    <ProgressBar
+        android:id="@+id/login_progress_1"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
+        android:layout_height="88dp"
+        android:fontFamily="@font/permanent_marker"
+        android:text="@string/app_name"
+        android:textAlignment="center"
+        android:textColor="@android:color/background_light"
+        android:textSize="36sp"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="224dp"
+        app:srcCompat="@drawable/wireless_internet" />
+
+    <EditText
+        android:id="@+id/email_1"
+        android:layout_width="300dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:background="@android:color/transparent"
+        android:ems="10"
+        android:hint="@string/prompt_email"
+        android:inputType="textEmailAddress"
+        android:lines="1"
+        android:singleLine="true"
+        android:textColorHighlight="@color/yellow_app"
+        android:theme="@android:style/Widget.Holo.Light.TextView" />
+
+    <EditText
+        android:id="@+id/password_1"
+        style="?android:attr/autoCompleteTextViewStyle"
+        android:layout_width="300dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:background="@android:color/transparent"
+        android:ems="10"
+        android:hint="@string/prompt_password"
+        android:inputType="textPassword" />
+
+    <Button
+        android:id="@+id/email_sign_in_button_1"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:background="@drawable/button_bg_rounded_corners"
+        android:fontFamily="@font/permanent_marker"
+        android:text="@string/action_sign_in"
+        android:textColor="@android:color/background_light" />
+</LinearLayout>

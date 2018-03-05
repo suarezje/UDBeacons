@@ -2,5 +2,7 @@
 <resources>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#40ff5d</color>
+    <color name="yellow_app">#ebba16</color>
+    <color name="white">#ffffff</color>
 </resources>
