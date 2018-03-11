@@ -23,5 +23,20 @@
     <string name="action_example">Example action</string>
 
     <string name="action_settings">Settings</string>
+    <string name="schedule">Horario</string>
+    <string name="directory">Directorio Universitario</string>
+    <string name="uWebsite">www.udistrital.edu.co</string>
+    <string name="home">Inicio</string>
+    <string name="social">Social</string>
+    <string name="fb">Facebook</string>
+    <string name="twitter">Twitter</string>
+    <string name="condor">Condor SGA</string>
+    <string name="tools">Herramientas</string>
+    <string name="share">Compartir</string>
+    <string name="exit">Salir</string>
+
+    <!-- Dialogs -->
+    <string name="loading_title">Aguarda</string>
+    <string name="loading_message">Estamos procesando tu solicitud ...</string>
 
 </resources>
