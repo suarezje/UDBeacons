@@ -7,7 +7,7 @@
     <string name="action_sign_in">Inicio Sesión</string>
     <string name="action_sign_in_short">Inicio Sesión</string>
     <string name="error_invalid_email">Correo no válido</string>
-    <string name="error_invalid_password">Clave demasiado corta</string>
+    <string name="error_invalid_password">Por favor ingresa la clave</string>
     <string name="error_incorrect_password">Clave incorrecta</string>
     <string name="error_field_required">Este campo es obligatorio</string>
     <string name="permission_rationale">"Los permisos de contactos son necesarios para proporcionar terminaciones de correo electrónico"</string>

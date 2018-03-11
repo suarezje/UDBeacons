@@ -1,12 +1,9 @@
-package co.edu.ingsw.udstrital.udbeacons;
+package co.edu.ingsw.udstrital.udbeacons.activities;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -15,10 +12,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import co.edu.ingsw.udstrital.udbeacons.WebFragment;
+import android.view.View;
+import android.widget.TextView;
+
+import co.edu.ingsw.udstrital.udbeacons.R;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, WebFragment.OnFragmentInteractionListener {
+
+    private TextView navUsername;
+    private TextView navEmail;
+    private TextView navRole;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +39,15 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        View headerView = navigationView.getHeaderView(0);
+        navUsername = (TextView) headerView.findViewById(R.id.txtName);
+        navEmail = (TextView) headerView.findViewById(R.id.txtMail);
+        navRole = (TextView) headerView.findViewById(R.id.txtRole);
+
+        navUsername.setText(getIntent().getStringExtra("user_name"));
+        navEmail.setText(getIntent().getStringExtra("user_email"));
+        navRole.setText(getIntent().getStringExtra("user_role"));
     }
 
     @Override
@@ -106,3 +119,4 @@ public class MainActivity extends AppCompatActivity
 
     }
 }
+

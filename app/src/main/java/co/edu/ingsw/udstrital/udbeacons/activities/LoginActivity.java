@@ -1,4 +1,4 @@
-package co.edu.ingsw.udstrital.udbeacons;
+package co.edu.ingsw.udstrital.udbeacons.activities;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -29,9 +29,24 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import co.edu.ingsw.udstrital.udbeacons.R;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -53,16 +68,19 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private static final String[] DUMMY_CREDENTIALS = new String[]{
             "jorgesuarez@correo.com:clave123", "alejandromartin@correo.com:clave123"
     };
-    /**
-     * Keep track of the login task to ensure we can cancel it if requested.
-     */
-    private UserLoginTask mAuthTask = null;
-
     // UI references.
     private EditText mEmailView;
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private static final String WS_LOGIN_URL = "http://10.0.2.2:8080/UDBeaconServices/services/authenticationService/loginUser";
+    private Boolean isLogged;
+    private String userNames;
+    private String userEmail;
+    private String userRole;
+    private String userMenu;
+    private int userRoleId;
+    private String loginErrorMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,8 +111,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });
 
-        //mLoginFormView = findViewById(R.id.login_form);
+        mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+        isLogged = Boolean.FALSE;
     }
 
     private void populateAutoComplete() {
@@ -140,67 +159,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 
-
-    /**
-     * Attempts to sign in or register the account specified by the login form.
-     * If there are form errors (invalid email, missing fields, etc.), the
-     * errors are presented and no actual login attempt is made.
-     */
-    private void attemptLogin() {
-        if (mAuthTask != null) {
-            return;
-        }
-
-        // Reset errors.
-        mEmailView.setError(null);
-        mPasswordView.setError(null);
-
-        // Store values at the time of the login attempt.
-        String email = mEmailView.getText().toString();
-        String password = mPasswordView.getText().toString();
-
-        boolean cancel = false;
-        View focusView = null;
-
-        // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
-            focusView = mPasswordView;
-            cancel = true;
-        }
-
-        // Check for a valid email address.
-        if (TextUtils.isEmpty(email)) {
-            mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
-            cancel = true;
-        } else if (!isEmailValid(email)) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
-            focusView = mEmailView;
-            cancel = true;
-        }
-
-        if (cancel) {
-            // There was an error; don't attempt login and focus the first
-            // form field with an error.
-            focusView.requestFocus();
-        } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
-            showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
-        }
-    }
-
     private boolean isEmailValid(String email) {
         //TODO: Replace this with your own logic
         return email.contains("@");
-    }
-
-    private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
-        return password.length() > 4;
     }
 
     /**
@@ -214,14 +175,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-            /*mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            /*
+            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
             mLoginFormView.animate().setDuration(shortAnimTime).alpha(
                     show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
                 }
-            });*/
+            });
+            */
 
             mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
             mProgressView.animate().setDuration(shortAnimTime).alpha(
@@ -282,6 +245,110 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         //mEmailView.setAdapter(adapter);
     }
 
+    /**
+     * Attempts to sign in or register the account specified by the login form.
+     * If there are form errors (invalid email, missing fields, etc.), the
+     * errors are presented and no actual login attempt is made.
+     */
+    private void attemptLogin() {
+        // Reset errors.
+        mEmailView.setError(null);
+        mPasswordView.setError(null);
+
+        // Store values at the time of the login attempt.
+        String email = mEmailView.getText().toString();
+        String password = mPasswordView.getText().toString();
+
+        boolean cancel = false;
+        View focusView = null;
+
+        // Check for a valid password, if the user entered one.
+        if (TextUtils.isEmpty(password)) {
+            mPasswordView.setError(getString(R.string.error_invalid_password));
+            focusView = mPasswordView;
+            cancel = true;
+        }
+
+        // Check for a valid email address.
+        if (TextUtils.isEmpty(email)) {
+            mEmailView.setError(getString(R.string.error_field_required));
+            focusView = mEmailView;
+            cancel = true;
+        } else if (!isEmailValid(email)) {
+            mEmailView.setError(getString(R.string.error_invalid_email));
+            focusView = mEmailView;
+            cancel = true;
+        }
+
+        if (cancel) {
+            // There was an error; don't attempt login and focus the first
+            // form field with an error.
+            focusView.requestFocus();
+        } else {
+            // Show a progress spinner, and kick off a background task to
+            // perform the user login attempt.
+            showProgress(true);
+            //mAuthTask = new UserLoginTask(email, password);
+            //mAuthTask.execute((Void) null);
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
+                    (Request.Method.POST, WS_LOGIN_URL, null, new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            try {
+                                if(response.getString("code").equals("000")){
+                                    userNames = response.getJSONObject("user_info").getString("first_name").trim()+" "+response.getJSONObject("user_info").getString("last_name").trim();
+                                    userEmail = response.getJSONObject("user_info").getString("email").trim();
+                                    userRole = response.getJSONObject("user_info").getString("role_name").trim();
+                                    userRoleId = response.getJSONObject("user_info").getInt("role_code");
+                                    userMenu = response.getJSONArray("user_menu").toString();
+                                    isLogged = Boolean.TRUE;
+                                }else{
+                                    isLogged = Boolean.FALSE;
+                                    loginErrorMessage = response.getString("message");
+                                }
+                            } catch (Exception ex) {
+                                isLogged = Boolean.FALSE;
+                                loginErrorMessage = "Error general en proceso de autenticación";
+                            } finally {
+                                showProgress(false);
+                                if(isLogged){
+                                    Bundle userData = new Bundle();
+                                    userData.putString("user_name", userNames);
+                                    userData.putString("user_role", userRole);
+                                    userData.putInt("user_role_id", userRoleId);
+                                    userData.putString("user_email", userEmail);
+                                    userData.putString("user_menu", userMenu);
+                                    Intent intent = new Intent(contexto, MainActivity.class);
+                                    intent.putExtras(userData);
+                                    startActivity(intent);
+                                }else{
+                                    Toast.makeText(contexto, "Fallo inicio de sesión: " + loginErrorMessage, Toast.LENGTH_LONG).show();
+                                    mEmailView.requestFocus();
+                                }
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            isLogged = Boolean.FALSE;
+                            loginErrorMessage = "Fallo de comunicación con el servidor. Por favor inténtelo después";
+                            Toast.makeText(contexto, "Fallo inicio de sesión: " + loginErrorMessage, Toast.LENGTH_LONG).show();
+                            showProgress(false);
+                        }
+                    }){
+                @Override
+                protected Map<String,String> getParams(){
+                    Map<String,String> params = new HashMap<String, String>();
+                    params.put("user", mEmailView.getText().toString());
+                    params.put("password", mPasswordView.getText().toString());
+                    return params;
+                }
+            };
+
+            RequestQueue requestQueue = Volley.newRequestQueue(contexto);
+            requestQueue.add(jsonObjectRequest);
+        }
+    }
 
     private interface ProfileQuery {
         String[] PROJECTION = {
@@ -291,65 +358,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         int ADDRESS = 0;
         int IS_PRIMARY = 1;
-    }
-
-    /**
-     * Represents an asynchronous login/registration task used to authenticate
-     * the user.
-     */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
-
-        private final String mEmail;
-        private final String mPassword;
-
-        UserLoginTask(String email, String password) {
-            mEmail = email;
-            mPassword = password;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
-
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
-            }
-
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }
-
-            // TODO: register the new account here.
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            mAuthTask = null;
-            showProgress(false);
-
-            if (success) {
-                //finish();
-                Intent intent = new Intent(contexto, MainActivity.class);
-                startActivity(intent);
-            } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            mAuthTask = null;
-            showProgress(false);
-        }
     }
 }
 
