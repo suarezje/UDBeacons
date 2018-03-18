@@ -22,7 +22,9 @@
 
     <string name="action_example">Example action</string>
 
-    <string name="action_settings">Settings</string>
+    <!-- Menu Names -->
+    <string name="titleQueries">Consultas</string>
+    <string name="action_settings">Configuraciones</string>
     <string name="schedule">Horario</string>
     <string name="directory">Directorio Universitario</string>
     <string name="uWebsite">www.udistrital.edu.co</string>
@@ -30,10 +32,16 @@
     <string name="social">Social</string>
     <string name="fb">Facebook</string>
     <string name="twitter">Twitter</string>
+    <string name="ldn">Linkedin</string>
     <string name="condor">Condor SGA</string>
     <string name="tools">Herramientas</string>
     <string name="share">Compartir</string>
     <string name="exit">Salir</string>
+
+    <!-- Menu IDs -->
+    <string name="fb_id">fb</string>
+    <string name="twitter_id">twitter</string>
+    <string name="ldn_id">linkedin</string>
 
     <!-- Dialogs -->
     <string name="loading_title">Aguarda</string>

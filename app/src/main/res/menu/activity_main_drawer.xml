@@ -3,47 +3,39 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <group android:checkableBehavior="single">
+    <item android:id="@+id/mainMenu"
+        android:title="@string/titleQueries">
+    <menu>
         <item
+            android:orderInCategory="0"
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_home_black_24dp"
             android:title="@string/home" />
         <item
-            android:id="@+id/nav_schedulle"
-            android:icon="@drawable/ic_date_range_black_24dp"
-            android:title="@string/schedule" />
-        <item
-            android:id="@+id/nav_condor"
-            android:icon="@drawable/ic_perm_identity_black_24dp"
-            android:title="@string/condor" />
-        <item
-            android:id="@+id/nav_directory"
-            android:icon="@drawable/ic_import_contacts_black_24dp"
-            android:title="@string/directory" />
-        <item
-            android:id="@+id/nav_Uwebsite"
-            android:icon="@drawable/ic_domain_black_24dp"
-            android:title="@string/uWebsite" />
-        <item
+            android:orderInCategory="0"
             android:id="@+id/nav_manage"
             android:icon="@drawable/ic_menu_manage"
             android:title="@string/tools" />
-    </group>
+    </menu>
+    </item>
 
     <item android:title="@string/social">
         <menu>
             <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="@string/share" />
+                android:id="@+id/nav_ldin"
+                android:icon="@drawable/linkedin"
+                android:title="@string/ldn"
+                android:visible="false"/>
             <item
                 android:id="@+id/nav_fb"
                 android:icon="@drawable/facebook_box"
-                android:title="@string/fb" />
+                android:title="@string/fb"
+                android:visible="false"/>
             <item
                 android:id="@+id/nav_twitter"
                 android:icon="@drawable/twitter"
-                android:title="@string/twitter" />
+                android:title="@string/twitter"
+                android:visible="false"/>
         </menu>
     </item>
 
