@@ -23,15 +23,15 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
 
+import co.edu.ingsw.udstrital.udbeacons.fragments.HomeFragment;
 import co.edu.ingsw.udstrital.udbeacons.R;
+import co.edu.ingsw.udstrital.udbeacons.fragments.WebFragment;
 import utils.CustomItemMenu;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, WebFragment.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, WebFragment.OnFragmentInteractionListener,
+        HomeFragment.OnFragmentInteractionListener{
 
     private TextView navUsername;
     private TextView navEmail;
@@ -70,6 +70,11 @@ public class MainActivity extends AppCompatActivity
 
         menu = getIntent().getStringExtra("user_menu");
         createDynamicMenu(navigationView);
+
+        Fragment myFragment = null;
+        myFragment = HomeFragment.newInstance(null,null);
+        FragmentManager manager = getSupportFragmentManager();
+        manager.beginTransaction().replace(R.id.mainLayout, myFragment, myFragment.getTag()).commit();
     }
 
     @Override
@@ -168,13 +173,18 @@ public class MainActivity extends AppCompatActivity
         Fragment myFragment = null;
 
         if (id == R.id.nav_home) {
-            // Pagina principal
-        } else if (id == R.id.nav_manage) {
-
+            myFragment = HomeFragment.newInstance(null,null);
         } else if(isUrlFromMainMenuItem(item.getTitle().toString())){
             myFragment = WebFragment.newInstance(getUrlFromMainMenuItem(item.getTitle().toString()));
         } else if(isActivityFromMainMenuItem(item.getTitle().toString())){
-            //Intent of activity
+            String activityToStart = "co.edu.ingsw.udstrital.udbeacons.activities."+getActivityFromMainMenuItem(item.getTitle().toString());
+            try {
+                Class<?> c = Class.forName(activityToStart);
+                Intent menuItemIntent = new Intent(this, c);
+                startActivity(menuItemIntent);
+            } catch (ClassNotFoundException ignored) {
+            }
+
         } else if (id == R.id.nav_ldin) {
             if(urlLinkedin != null){
                 myFragment = WebFragment.newInstance(urlLinkedin);
@@ -200,7 +210,8 @@ public class MainActivity extends AppCompatActivity
         }
 
         if(myFragment != null){
-            FragmentManager manager = getSupportFragmentManager();manager.beginTransaction().replace(R.id.mainLayout, myFragment, myFragment.getTag()).commit();
+            FragmentManager manager = getSupportFragmentManager();
+            manager.beginTransaction().replace(R.id.mainLayout, myFragment, myFragment.getTag()).commit();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -208,6 +219,12 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    /**
+     * This method return the url to redirect defined for an item
+     * @param name is the title of item to search
+     * @return The url to redirect defined from menu retrieved by login service. If the name of item
+     * does not exists in menu, return null
+     */
     private String getUrlFromMainMenuItem(String name){
         for(CustomItemMenu item: mainMenuActions){
             if(item.getName().equals(name))
@@ -216,6 +233,25 @@ public class MainActivity extends AppCompatActivity
         return null;
     }
 
+    /**
+     * This method return the activity defined for an item
+     * @param name is the title of item to search
+     * @return The activity name defined from menu retrieved by login service. If the name of item
+     * does not exists in menu, return null
+     */
+    private String getActivityFromMainMenuItem(String name){
+        for(CustomItemMenu item: mainMenuActions){
+            if(item.getName().equals(name))
+                return item.getActivity();
+        }
+        return null;
+    }
+
+    /**
+     * Allow to knmow if an item has defined an url to redirect
+     * @param name is the title of the item to search
+     * @return True if the item has an url defined, otherwise return false
+     */
     private boolean isUrlFromMainMenuItem(String name){
         for(CustomItemMenu item: mainMenuActions){
             if(item.getName().equals(name))
@@ -224,6 +260,11 @@ public class MainActivity extends AppCompatActivity
         return false;
     }
 
+    /**
+     * Allow to knmow if an item has defined an activity
+     * @param name is the title of the item to search
+     * @return True if the item has an activity defined, otherwise return false
+     */
     private boolean isActivityFromMainMenuItem(String name){
         for(CustomItemMenu item: mainMenuActions){
             if(item.getName().equals(name))

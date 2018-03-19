@@ -17,10 +17,10 @@
     <string name="title_section2">Section 2</string>
     <string name="title_section3">Section 3</string>
 
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="navigation_drawer_open">Abrir Menú</string>
+    <string name="navigation_drawer_close">Cerrar Menú</string>
 
-    <string name="action_example">Example action</string>
+    <string name="action_example">Acción de Ejemplo</string>
 
     <!-- Menu Names -->
     <string name="titleQueries">Consultas</string>
@@ -44,7 +44,14 @@
     <string name="ldn_id">linkedin</string>
 
     <!-- Dialogs -->
-    <string name="loading_title">Aguarda</string>
-    <string name="loading_message">Estamos procesando tu solicitud ...</string>
+    <string name="loading_title">Aguarda ...</string>
+    <string name="loading_message">Estamos procesando tu solicitud</string>
+    <string name="welcome">Hola! Que bueno que estas aquí. Vamos a navegar</string>
+    <string name="welcome2">Bienvenido a</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_schedulle">SchedulleActivity</string>
+    <string name="section_format">Hello World from section: %1$d</string>
 
 </resources>
