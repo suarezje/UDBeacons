@@ -5,11 +5,10 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
 
@@ -17,7 +16,6 @@ import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 
 import android.os.Build;
 import android.os.Bundle;
@@ -40,7 +38,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
-import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -57,7 +55,7 @@ import static android.Manifest.permission.READ_CONTACTS;
  */
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
-    private Context contexto;
+    private Context context;
     /**
      * Id to identity READ_CONTACTS permission request.
      */
@@ -81,13 +79,19 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private String userEmail;
     private String userRole;
     private String userMenu;
+    private String userSchedulle;
     private int userRoleId;
     private String loginErrorMessage;
+
+    private SharedPreferences sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.contexto = this.getBaseContext();
+        this.context = this.getBaseContext();
+
+        this.sharedPref = this.context.getSharedPreferences(
+                getString(R.string.shared_preference_file), Context.MODE_PRIVATE);
         setContentView(R.layout.activity_login);
         // Set up the login form.
         mEmailView = (EditText) findViewById(R.id.email);
@@ -176,17 +180,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         // the progress spinner.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-
-            /*
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            mLoginFormView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-                }
-            });
-            */
 
             mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
             mProgressView.animate().setDuration(shortAnimTime).alpha(
@@ -309,22 +302,30 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                     loginErrorMessage = response.getString("message");
                                 }
                             } catch (Exception ex) {
+                                ex.printStackTrace();
                                 isLogged = Boolean.FALSE;
-                                loginErrorMessage = "Error general en proceso de autenticación";
+                                loginErrorMessage = getString(R.string.login_general_error);
                             } finally {
                                 showProgress(false);
                                 if(isLogged){
-                                    Bundle userData = new Bundle();
-                                    userData.putString("user_name", userNames);
-                                    userData.putString("user_role", userRole);
-                                    userData.putInt("user_role_id", userRoleId);
-                                    userData.putString("user_email", userEmail);
-                                    userData.putString("user_menu", userMenu);
-                                    Intent intent = new Intent(contexto, MainActivity.class);
-                                    intent.putExtras(userData);
+                                    try{
+                                        userSchedulle = response.getJSONArray("class_schedule").toString();
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                        userSchedulle = null;
+                                    }
+                                    SharedPreferences.Editor editor = sharedPref.edit();
+                                    editor.putString(getString(R.string.user_pref_name),userNames);
+                                    editor.putString(getString(R.string.user_pref_role),userRole);
+                                    editor.putInt(getString(R.string.user_pref_role_id),userRoleId);
+                                    editor.putString(getString(R.string.user_pref_email),userEmail);
+                                    editor.putString(getString(R.string.user_pref_menu),userMenu);
+                                    editor.putString(getString(R.string.user_pref_schedulle),userSchedulle);
+                                    editor.commit();
+                                    Intent intent = new Intent(context, MainActivity.class);
                                     startActivity(intent);
                                 }else{
-                                    Toast.makeText(contexto, "Fallo inicio de sesión: " + loginErrorMessage, Toast.LENGTH_LONG).show();
+                                    Toast.makeText(context, getString(R.string.login_fail) + loginErrorMessage, Toast.LENGTH_LONG).show();
                                     mEmailView.requestFocus();
                                 }
                             }
@@ -333,8 +334,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             isLogged = Boolean.FALSE;
-                            loginErrorMessage = "Fallo de comunicación con el servidor. Por favor inténtelo después";
-                            Toast.makeText(contexto, "Fallo inicio de sesión: " + loginErrorMessage, Toast.LENGTH_LONG).show();
+                            loginErrorMessage = getString(R.string.failed_com_to_server);
+                            Toast.makeText(context, getString(R.string.login_fail) + loginErrorMessage, Toast.LENGTH_LONG).show();
                             showProgress(false);
                         }
                     }){
@@ -347,7 +348,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 }
             };
 
-            RequestQueue requestQueue = Volley.newRequestQueue(contexto);
+            RequestQueue requestQueue = Volley.newRequestQueue(context);
             requestQueue.add(jsonObjectRequest);
         }
     }

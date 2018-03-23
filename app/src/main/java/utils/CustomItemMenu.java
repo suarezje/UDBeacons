@@ -10,13 +10,13 @@ public class CustomItemMenu implements Comparable<CustomItemMenu>{
     private int order;
     private String name;
     private String url;
-    private String activity;
+    private String fragment;
 
-    public CustomItemMenu(int order, String name, String url, String activity) {
+    public CustomItemMenu(int order, String name, String url, String fragment) {
         this.order = order;
         this.name = name;
         this.url = url;
-        this.activity = activity;
+        this.fragment = fragment;
     }
 
     public int getOrder() {
@@ -43,12 +43,12 @@ public class CustomItemMenu implements Comparable<CustomItemMenu>{
         this.url = url;
     }
 
-    public String getActivity() {
-        return activity;
+    public String getFragment() {
+        return fragment;
     }
 
-    public void setActivity(String activity) {
-        this.activity = activity;
+    public void setFragment(String fragment) {
+        this.fragment = fragment;
     }
 
     @Override

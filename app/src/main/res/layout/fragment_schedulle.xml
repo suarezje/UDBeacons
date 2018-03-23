@@ -1,22 +1,49 @@
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="co.edu.ingsw.udstrital.udbeacons.activities.SchedulleActivity$PlaceholderFragment">
+    tools:context="co.edu.ingsw.udstrital.udbeacons.fragments.SchedulleFragment">
 
-    <TextView
-        android:id="@+id/section_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/constraintLayout"
-        tools:layout_constraintLeft_creator="1"
-        tools:layout_constraintTop_creator="1" />
+    <!-- TODO: Update blank fragment layout -->
 
-</android.support.constraint.ConstraintLayout>
+    <android.support.design.widget.TabLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.design.widget.TabItem
+            android:id="@+id/tab_monday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Lunes" />
+
+        <android.support.design.widget.TabItem
+            android:id="@+id/tab_tuesday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Martes" />
+
+        <android.support.design.widget.TabItem
+            android:id="@+id/tab_wednesday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Miércoles" />
+
+        <android.support.design.widget.TabItem
+            android:id="@+id/tab_thursday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Jueves" />
+
+        <android.support.design.widget.TabItem
+            android:id="@+id/tab_friday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Viernes" />
+
+        <android.support.design.widget.TabItem
+            android:id="@+id/tab_saturday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sábado" />
+    </android.support.design.widget.TabLayout>
+</FrameLayout>

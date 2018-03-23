@@ -1,7 +1,18 @@
 <resources>
     <string name="app_name">UD Beacons</string>
+    <!-- Strings shared preferences -->
+    <string name="shared_preference_file">udbeacons.preferences</string>
+    <string name="user_pref_name">user_name</string>
+    <string name="user_pref_role">user_role</string>
+    <string name="user_pref_role_id">user_role_id</string>
+    <string name="user_pref_email">user_email</string>
+    <string name="user_pref_menu">user_menu</string>
+    <string name="user_pref_schedulle">user_schedulle</string>
 
     <!-- Strings related to login -->
+    <string name="default_name">Nombre Usuario</string>
+    <string name="default_email">usuario@correo.udistrital.edu.co</string>
+    <string name="default_role">Estudiante</string>
     <string name="prompt_email">Correo</string>
     <string name="prompt_password">Clave</string>
     <string name="action_sign_in">Inicio Sesión</string>
@@ -12,6 +23,13 @@
     <string name="error_field_required">Este campo es obligatorio</string>
     <string name="permission_rationale">"Los permisos de contactos son necesarios para proporcionar terminaciones de correo electrónico"</string>
     <string name="title_activity_main">UD Beacons</string>
+
+    <!-- Strings related to Exceptions -->
+    <string name="login_general_error">Error general en proceso de autenticación</string>
+    <string name="failed_com_to_server">Fallo de comunicación con el servidor. Por favor inténtelo después</string>
+    <string name="login_fail">Fallo inicio de sesión: </string>
+
+
 
     <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>
