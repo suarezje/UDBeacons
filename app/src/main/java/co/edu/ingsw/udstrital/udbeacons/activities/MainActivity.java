@@ -26,6 +26,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import co.edu.ingsw.udstrital.udbeacons.fragments.DayFragment;
 import co.edu.ingsw.udstrital.udbeacons.fragments.HomeFragment;
 import co.edu.ingsw.udstrital.udbeacons.R;
 import co.edu.ingsw.udstrital.udbeacons.fragments.SchedulleFragment;
@@ -34,7 +35,8 @@ import utils.CustomItemMenu;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, WebFragment.OnFragmentInteractionListener,
-        HomeFragment.OnFragmentInteractionListener, SchedulleFragment.OnFragmentInteractionListener{
+        HomeFragment.OnFragmentInteractionListener, SchedulleFragment.OnFragmentInteractionListener,
+        DayFragment.OnFragmentInteractionListener{
     private Context context;
 
     private TextView navUsername;

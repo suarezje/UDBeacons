@@ -30,7 +30,6 @@
     <string name="login_fail">Fallo inicio de sesión: </string>
 
 
-
     <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>
     <string name="title_section3">Section 3</string>
@@ -60,6 +59,21 @@
     <string name="fb_id">fb</string>
     <string name="twitter_id">twitter</string>
     <string name="ldn_id">linkedin</string>
+
+    <!-- Strings days of week -->
+    <string name="monday">Lunes</string>
+    <string name="tuesday">Martes</string>
+    <string name="wednesday">Miercoles</string>
+    <string name="thursday">Jueves</string>
+    <string name="friday">Viernes</string>
+    <string name="saturday">Sabado</string>
+
+    <!-- Schedulle table -->
+    <string name="subject">Asignatura</string>
+    <string name="teacher">Docente</string>
+    <string name="timeStart">Hora Inicio</string>
+    <string name="timeEnd">Hora Fin</string>
+    <string name="classroom">Salón</string>
 
     <!-- Dialogs -->
     <string name="loading_title">Aguarda ...</string>

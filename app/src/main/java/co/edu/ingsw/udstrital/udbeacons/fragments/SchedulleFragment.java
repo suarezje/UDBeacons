@@ -3,12 +3,21 @@ package co.edu.ingsw.udstrital.udbeacons.fragments;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
 
 import co.edu.ingsw.udstrital.udbeacons.R;
+import utils.CustomFragmentPageAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,6 +38,9 @@ public class SchedulleFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+    private static final String TAG = SchedulleFragment.class.getSimpleName();
+    private TabLayout tabLayout;
+    private ViewPager viewPager;
 
     public SchedulleFragment() {
         // Required empty public constructor
@@ -64,8 +76,14 @@ public class SchedulleFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_schedulle, container, false);
+        tabLayout = (TabLayout)view.findViewById(R.id.tabSchedulle);
+        viewPager = (ViewPager)view.findViewById(R.id.viewpager);
+        viewPager.setAdapter(new CustomFragmentPageAdapter(getChildFragmentManager()));
+        tabLayout.setupWithViewPager(viewPager);
+        return view;
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_schedulle, container, false);
+        //return inflater.inflate(R.layout.fragment_schedulle, container, false);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -106,4 +124,6 @@ public class SchedulleFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+
 }
