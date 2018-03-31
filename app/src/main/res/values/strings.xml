@@ -86,4 +86,8 @@
     <string name="title_activity_schedulle">SchedulleActivity</string>
     <string name="section_format">Hello World from section: %1$d</string>
 
+    <!-- Beacons management -->
+    <string name="key_zone_classroom">classroom</string>
+    <string name="value_zone_classroom">C302</string>
+
 </resources>

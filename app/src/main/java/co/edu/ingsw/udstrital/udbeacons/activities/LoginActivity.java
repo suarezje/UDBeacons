@@ -21,6 +21,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -37,6 +38,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.estimote.coresdk.common.requirements.SystemRequirementsChecker;
+import com.estimote.mustard.rx_goodness.rx_requirements_wizard.Requirement;
+import com.estimote.mustard.rx_goodness.rx_requirements_wizard.RequirementsWizardFactory;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -47,12 +51,14 @@ import java.util.List;
 import java.util.Map;
 
 import co.edu.ingsw.udstrital.udbeacons.R;
+import co.edu.ingsw.udstrital.udbeacons.UDBeacons;
+import co.edu.ingsw.udstrital.udbeacons.estimote.ProximityContentManager;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.Function1;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
-/**
- * A login screen that offers login via email/password.
- */
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
     private Context context;
@@ -84,6 +90,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private String loginErrorMessage;
 
     private SharedPreferences sharedPref;
+
+    private ProximityContentManager proximityContentManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,6 +128,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
         isLogged = Boolean.FALSE;
+
+        startBeaconsMonitoring();
     }
 
     private void populateAutoComplete() {
@@ -236,15 +246,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         ArrayAdapter<String> adapter =
                 new ArrayAdapter<>(LoginActivity.this,
                         android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
-
-        //mEmailView.setAdapter(adapter);
     }
 
-    /**
-     * Attempts to sign in or register the account specified by the login form.
-     * If there are form errors (invalid email, missing fields, etc.), the
-     * errors are presented and no actual login attempt is made.
-     */
     private void attemptLogin() {
         // Reset errors.
         mEmailView.setError(null);
@@ -366,6 +369,65 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     @Override
     public void onBackPressed() {
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SystemRequirementsChecker.checkWithDefaultDialogs(this);
+        if(!proximityContentManager.isActive){
+            proximityContentManager.start();
+        }
+    }
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+        if(proximityContentManager.isActive){
+            proximityContentManager.stop();
+        }
+    }
+
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        if(proximityContentManager.isActive){
+            proximityContentManager.stop();
+        }
+    }
+
+    private void startBeaconsMonitoring(){
+        proximityContentManager = new ProximityContentManager(this.context,
+                ((UDBeacons)getApplication()).cloudCredentials
+                //this.sharedPref.getString(getString(R.string.user_pref_email), getString(R.string.default_email)));
+                );
+        RequirementsWizardFactory
+                .createEstimoteRequirementsWizard()
+                .fulfillRequirements(this,
+                        // onRequirementsFulfilled
+                        new Function0<Unit>() {
+                            @Override public Unit invoke() {
+                                Log.d("app", "requirements fulfilled");
+                                proximityContentManager.start();
+                                return null;
+                            }
+                        },
+                        // onRequirementsMissing
+                        new Function1<List<? extends Requirement>, Unit>() {
+                            @Override public Unit invoke(List<? extends Requirement> requirements) {
+                                Log.e("app", "requirements missing: " + requirements);
+                                proximityContentManager.stop();
+                                return null;
+                            }
+                        },
+                        // onError
+                        new Function1<Throwable, Unit>() {
+                            @Override public Unit invoke(Throwable throwable) {
+                                Log.e("app", "requirements error: " + throwable);
+                                proximityContentManager.stop();
+                                return null;
+                            }
+                        });
     }
 }
 
