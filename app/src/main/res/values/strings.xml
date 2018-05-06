@@ -89,5 +89,7 @@
     <!-- Beacons management -->
     <string name="key_zone_classroom">classroom</string>
     <string name="value_zone_classroom">C302</string>
+    <string name="channel_name">BeaconsNotif</string>
+    <string name="channel_description">Notificaciones a partir de beacons</string>
 
 </resources>

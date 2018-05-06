@@ -30,7 +30,7 @@ public class ProximityContentManager {
     private Context context;
     private EstimoteCloudCredentials cloudCredentials;
     private ProximityObserver.Handler proximityObserverHandler;
-    private static final String WS_NOTIFICATIONS_URL = "http://192.168.0.12:8080/UDBeaconServices/services/notificationsService/getNotifications";
+    private static final String WS_NOTIFICATIONS_URL = "http://192.168.0.5:8080/UDBeaconServices/services/notificationsService/getNotifications";
     private static String email;
     public boolean isActive;
     private SharedPreferences sharedPref;

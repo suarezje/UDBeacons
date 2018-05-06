@@ -129,7 +129,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mProgressView = findViewById(R.id.login_progress);
         isLogged = Boolean.FALSE;
 
-        startBeaconsMonitoring();
+        //startBeaconsMonitoring();
     }
 
     private void populateAutoComplete() {
@@ -375,7 +375,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     protected void onResume() {
         super.onResume();
         SystemRequirementsChecker.checkWithDefaultDialogs(this);
-        if(!proximityContentManager.isActive){
+        if(proximityContentManager != null && !proximityContentManager.isActive){
             proximityContentManager.start();
         }
     }
@@ -383,7 +383,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     @Override
     protected void onStop(){
         super.onStop();
-        if(proximityContentManager.isActive){
+        if(proximityContentManager != null && proximityContentManager.isActive){
             proximityContentManager.stop();
         }
     }
@@ -391,16 +391,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     @Override
     protected void onDestroy(){
         super.onDestroy();
-        if(proximityContentManager.isActive){
+        if(proximityContentManager != null && proximityContentManager.isActive){
             proximityContentManager.stop();
         }
     }
 
     private void startBeaconsMonitoring(){
         proximityContentManager = new ProximityContentManager(this.context,
-                ((UDBeacons)getApplication()).cloudCredentials
+                ((UDBeacons)getApplicationContext()).cloudCredentials
                 //this.sharedPref.getString(getString(R.string.user_pref_email), getString(R.string.default_email)));
-                );
+        );
         RequirementsWizardFactory
                 .createEstimoteRequirementsWizard()
                 .fulfillRequirements(this,
