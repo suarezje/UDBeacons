@@ -33,6 +33,18 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".activities.RegistryActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/title_activity_main"
+            android:parentActivityName=".activities.LoginActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="co.edu.ingsw.udstrital.udbeacons.activities.LoginActivity" />
+        </activity>
+
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />

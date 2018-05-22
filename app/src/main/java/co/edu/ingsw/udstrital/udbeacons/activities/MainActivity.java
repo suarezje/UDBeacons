@@ -108,11 +108,11 @@ public class MainActivity extends AppCompatActivity
                     socialMenuActions = new ArrayList<CustomItemMenu>();
                     for(int i = 0; i < jsonMenu.length(); i++){
                         JSONObject objItem = (JSONObject)jsonMenu.get(i);
-                        if(objItem.getString("section").equals("main")){
-                            mainMenuActions.add(new CustomItemMenu(objItem.getInt("order"),objItem.getString("name")
+                        if(objItem.getString("sectionMenu").equals("main")){
+                            mainMenuActions.add(new CustomItemMenu(objItem.getInt("orderMenu"),objItem.getString("menuName")
                                     ,objItem.getString("url"),objItem.getString("fragment")));
-                        }else if(objItem.getString("section").equals("social")){
-                            socialMenuActions.add(new CustomItemMenu(objItem.getInt("order"),objItem.getString("name")
+                        }else if(objItem.getString("sectionMenu").equals("social")){
+                            socialMenuActions.add(new CustomItemMenu(objItem.getInt("orderMenu"),objItem.getString("menuName")
                                     ,objItem.getString("url"),objItem.getString("fragment")));
                         }
                     }

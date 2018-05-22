@@ -147,7 +147,7 @@ public class DayFragment extends Fragment {
                         teacher.setText(row.getString("teacher"));
                         startTime.setText(row.getString("timeStart"));
                         endTime.setText(row.getString("timeEnd"));
-                        classRoom.setText(row.getString("classroom"));
+                        classRoom.setText(row.getString("classRoom"));
                         tableRow.addView(subject);
                         tableRow.addView(teacher);
                         tableRow.addView(startTime);

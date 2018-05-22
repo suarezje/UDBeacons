@@ -3,33 +3,25 @@ package co.edu.ingsw.udstrital.udbeacons.activities;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.LoaderManager;
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.app.LoaderManager.LoaderCallbacks;
-
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
-
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -40,8 +32,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.estimote.coresdk.common.requirements.SystemRequirementsChecker;
-import com.estimote.mustard.rx_goodness.rx_requirements_wizard.Requirement;
-import com.estimote.mustard.rx_goodness.rx_requirements_wizard.RequirementsWizardFactory;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -52,89 +42,60 @@ import java.util.List;
 import java.util.Map;
 
 import co.edu.ingsw.udstrital.udbeacons.R;
-import co.edu.ingsw.udstrital.udbeacons.UDBeacons;
-import co.edu.ingsw.udstrital.udbeacons.estimote.ProximityContentManager;
-import kotlin.Unit;
-import kotlin.jvm.functions.Function0;
-import kotlin.jvm.functions.Function1;
-
 import static android.Manifest.permission.READ_CONTACTS;
 
-public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
-
+public class RegistryActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
     private Context context;
+
     /**
      * Id to identity READ_CONTACTS permission request.
      */
     private static final int REQUEST_READ_CONTACTS = 0;
 
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
     // UI references.
     private EditText mEmailView;
     private EditText mPasswordView;
+    private EditText mPasswordView2;
+    private EditText mId;
+    private EditText mExternalID;
+    private EditText mName;
+    private EditText mLastName;
+    private Button registryButton;
+
     private View mProgressView;
-    private View mLoginFormView;
-    private static final String WS_LOGIN_URL = "http://35.231.239.50:8080/UDBeaconServices/services/authenticationService/loginUser";
-    private Boolean isLogged;
-    private String userNames;
-    private String userEmail;
-    private String userRole;
-    private String userMenu;
-    private String userSchedulle;
-    private int userRoleId;
-    private String loginErrorMessage;
-
-    private SharedPreferences sharedPref;
-
-    private ProximityContentManager proximityContentManager;
+    private View mRegistryFormView;
+    private static final String WS_REGISTRY_URL = "http://35.231.239.50:8080/UDBeaconServices/services/registerService/register";
+    private String registryErrorMessage;
+    private Boolean isRegistred;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.context = this.getBaseContext();
 
-        this.sharedPref = this.context.getSharedPreferences(
-                getString(R.string.shared_preference_file), Context.MODE_PRIVATE);
-        setContentView(R.layout.activity_login);
-        // Set up the login form.
-        mEmailView = (EditText) findViewById(R.id.email);
+
+        setContentView(R.layout.activity_registry);
+        // Set up the registry form.
+        mEmailView = (EditText) findViewById(R.id.email_registry);
+        mPasswordView = (EditText) findViewById(R.id.password_registry);
+        mPasswordView2 = (EditText) findViewById(R.id.password_registry2);
+        mId = (EditText) findViewById(R.id.user_id_registry);
+        mExternalID = (EditText) findViewById(R.id.user_external_code_registry);
+        mName = (EditText) findViewById(R.id.name_registry);
+        mLastName = (EditText) findViewById(R.id.lastname_registry);
+        registryButton = (Button) findViewById(R.id.registry_action_button);
+
+        registryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                attemptToRegistry();
+            }
+        });
+
+        mRegistryFormView = findViewById(R.id.registry_form);
+        mProgressView = findViewById(R.id.registry_progress);
+        isRegistred = Boolean.FALSE;
         populateAutoComplete();
-
-        mPasswordView = (EditText) findViewById(R.id.password);
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
-                    return true;
-                }
-                return false;
-            }
-        });
-
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
-        mEmailSignInButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                attemptLogin();
-            }
-        });
-
-        mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
-        isLogged = Boolean.FALSE;
-
-        Button registryButton = (Button) findViewById(R.id.registry_button);
-        registryButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(context, RegistryActivity.class);
-                startActivity(intent);
-            }
-        });
     }
 
     private void populateAutoComplete() {
@@ -186,7 +147,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     /**
-     * Shows the progress UI and hides the login form.
+     * Shows the progress UI and hides the registry form.
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private void showProgress(final boolean show) {
@@ -208,7 +169,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // The ViewPropertyAnimator APIs are not available, so simply show
             // and hide the relevant UI components.
             mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            mRegistryFormView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }
 
@@ -217,7 +178,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         return new CursorLoader(this,
                 // Retrieve data rows for the device user's 'profile' contact.
                 Uri.withAppendedPath(ContactsContract.Profile.CONTENT_URI,
-                        ContactsContract.Contacts.Data.CONTENT_DIRECTORY), ProfileQuery.PROJECTION,
+                        ContactsContract.Contacts.Data.CONTENT_DIRECTORY), RegistryActivity.ProfileQuery.PROJECTION,
 
                 // Select only email addresses.
                 ContactsContract.Contacts.Data.MIMETYPE +
@@ -234,7 +195,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         List<String> emails = new ArrayList<>();
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
-            emails.add(cursor.getString(ProfileQuery.ADDRESS));
+            emails.add(cursor.getString(RegistryActivity.ProfileQuery.ADDRESS));
             cursor.moveToNext();
         }
 
@@ -249,23 +210,30 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
         //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
         ArrayAdapter<String> adapter =
-                new ArrayAdapter<>(LoginActivity.this,
+                new ArrayAdapter<>(RegistryActivity.this,
                         android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
     }
 
-    private void attemptLogin() {
-        // Reset errors.
-        mEmailView.setError(null);
-        mPasswordView.setError(null);
-
-        // Store values at the time of the login attempt.
+    private void attemptToRegistry() {
+        //Validate fields
+        // Store values at the time of the registry attempt.
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
+        String password2 = mPasswordView2.getText().toString();
+        String name = mName.getText().toString();
+        String lastName = mLastName.getText().toString();
+        String id = mId.getText().toString();
+        String externalID = mExternalID.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
 
         // Check for a valid password, if the user entered one.
+        if (!TextUtils.equals(password, password2)) {
+            mPasswordView.setError(getString(R.string.error_different_password));
+            focusView = mPasswordView;
+            cancel = true;
+        }
         if (TextUtils.isEmpty(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
@@ -283,66 +251,85 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             cancel = true;
         }
 
+        //Check for non empty names and IDs
+        if (TextUtils.isEmpty(name)) {
+            mName.setError(getString(R.string.error_empty_name));
+            focusView = mName;
+            cancel = true;
+        }
+        if (TextUtils.isEmpty(lastName)) {
+            mLastName.setError(getString(R.string.error_empty_lastname));
+            focusView = mLastName;
+            cancel = true;
+        }
+        if (TextUtils.isEmpty(id)) {
+            mId.setError(getString(R.string.error_empty_id));
+            focusView = mId;
+            cancel = true;
+        }
+        if (TextUtils.isEmpty(externalID)) {
+            mExternalID.setError(getString(R.string.error_empty_externalID));
+            focusView = mExternalID;
+            cancel = true;
+        }
+
+        //Check for valid IDs
+        if (!TextUtils.isDigitsOnly(id)) {
+            mId.setError(getString(R.string.error_invalid_id));
+            focusView = mId;
+            cancel = true;
+        }
+        if (!TextUtils.isDigitsOnly(externalID)) {
+            mExternalID.setError(getString(R.string.error_invalid_externalID));
+            focusView = mExternalID;
+            cancel = true;
+        }
+
         if (cancel) {
-            // There was an error; don't attempt login and focus the first
+            // There was an error; don't attempt registry and focus the first
             // form field with an error.
             focusView.requestFocus();
         } else {
             // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
+            // perform the user registry attempt.
             showProgress(true);
-            //mAuthTask = new UserLoginTask(email, password);
-            //mAuthTask.execute((Void) null);
 
             JSONObject js = new JSONObject();
             try {
-                js.put("user", mEmailView.getText().toString());
+                js.put("idUser", mId.getText().toString());
+                js.put("externalCodeUser", mExternalID.getText().toString());
+                js.put("firstName", mName.getText().toString());
+                js.put("lastName", mLastName.getText().toString());
                 js.put("passwd", mPasswordView.getText().toString());
+                js.put("userName", mEmailView.getText().toString());
+                js.put("idUser", mId.getText().toString());
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
-                    (Request.Method.POST, WS_LOGIN_URL, js, new Response.Listener<JSONObject>() {
+                    (Request.Method.POST, WS_REGISTRY_URL, js, new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
                             try {
                                 if(response.getString("code").equals("00")){
-                                    userNames = response.getJSONObject("userInfo").getString("firstName").trim()+" "+response.getJSONObject("userInfo").getString("lastName").trim();
-                                    userEmail = response.getJSONObject("userInfo").getString("email").trim();
-                                    userRole = response.getJSONObject("userInfo").getString("roleName").trim();
-                                    userRoleId = Integer.valueOf(response.getJSONObject("userInfo").getString("idRole")).intValue();
-                                    userMenu = response.getJSONArray("userMenu").toString();
-                                    isLogged = Boolean.TRUE;
+                                    isRegistred = Boolean.TRUE;
                                 }else{
-                                    isLogged = Boolean.FALSE;
-                                    loginErrorMessage = response.getString("message");
+                                    isRegistred = Boolean.FALSE;
+                                    registryErrorMessage = response.getString("message");
                                 }
                             } catch (Exception ex) {
                                 ex.printStackTrace();
-                                isLogged = Boolean.FALSE;
-                                loginErrorMessage = getString(R.string.login_general_error);
+                                isRegistred = Boolean.TRUE;
+                                registryErrorMessage = getString(R.string.registry_general_error);
                             } finally {
                                 showProgress(false);
-                                if(isLogged){
-                                    try{
-                                        userSchedulle = response.getJSONArray("classSchedule").toString();
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                        userSchedulle = null;
-                                    }
-                                    SharedPreferences.Editor editor = sharedPref.edit();
-                                    editor.putString(getString(R.string.user_pref_name),userNames);
-                                    editor.putString(getString(R.string.user_pref_role),userRole);
-                                    editor.putInt(getString(R.string.user_pref_role_id),userRoleId);
-                                    editor.putString(getString(R.string.user_pref_email),userEmail);
-                                    editor.putString(getString(R.string.user_pref_menu),userMenu);
-                                    editor.putString(getString(R.string.user_pref_schedulle),userSchedulle);
-                                    editor.commit();
-                                    Intent intent = new Intent(context, MainActivity.class);
+                                if(isRegistred){
+                                    Toast.makeText(context, getString(R.string.registry_ok), Toast.LENGTH_LONG).show();
+                                    Intent intent = new Intent(context, LoginActivity.class);
                                     startActivity(intent);
                                 }else{
-                                    Toast.makeText(context, getString(R.string.login_fail) + loginErrorMessage, Toast.LENGTH_LONG).show();
+                                    Toast.makeText(context, getString(R.string.registry_fail) + registryErrorMessage, Toast.LENGTH_LONG).show();
                                     mEmailView.requestFocus();
                                 }
                             }
@@ -350,17 +337,21 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            isLogged = Boolean.FALSE;
-                            loginErrorMessage = getString(R.string.failed_com_to_server);
-                            Toast.makeText(context, getString(R.string.login_fail) + loginErrorMessage, Toast.LENGTH_LONG).show();
+                            isRegistred = Boolean.FALSE;
+                            registryErrorMessage = getString(R.string.failed_com_to_server);
+                            Toast.makeText(context, getString(R.string.registry_fail) + registryErrorMessage, Toast.LENGTH_LONG).show();
                             showProgress(false);
                         }
                     }){
                 @Override
                 protected Map<String,String> getParams(){
                     Map<String,String> params = new HashMap<String, String>();
-                    params.put("user", mEmailView.getText().toString());
+                    params.put("idUser", mId.getText().toString());
+                    params.put("externalCodeUser", mExternalID.getText().toString());
+                    params.put("firstName", mName.getText().toString());
+                    params.put("lastName", mLastName.getText().toString());
                     params.put("passwd", mPasswordView.getText().toString());
+                    params.put("userName", mEmailView.getText().toString());
                     return params;
                 }
                 @Override
@@ -374,6 +365,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             RequestQueue requestQueue = Volley.newRequestQueue(context);
             requestQueue.add(jsonObjectRequest);
         }
+
     }
 
     private interface ProfileQuery {
@@ -386,34 +378,23 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         int IS_PRIMARY = 1;
     }
 
-    @Override
-    public void onBackPressed() {
-
-    }
 
     @Override
     protected void onResume() {
         super.onResume();
         SystemRequirementsChecker.checkWithDefaultDialogs(this);
-        if(proximityContentManager != null && !proximityContentManager.isActive){
-            proximityContentManager.start();
-        }
     }
 
     @Override
     protected void onStop(){
         super.onStop();
-        if(proximityContentManager != null && proximityContentManager.isActive){
-            proximityContentManager.stop();
-        }
+
     }
 
     @Override
     protected void onDestroy(){
         super.onDestroy();
-        if(proximityContentManager != null && proximityContentManager.isActive){
-            proximityContentManager.stop();
-        }
-    }
-}
 
+    }
+
+}

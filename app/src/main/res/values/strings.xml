@@ -24,6 +24,25 @@
     <string name="permission_rationale">"Los permisos de contactos son necesarios para proporcionar terminaciones de correo electrónico"</string>
     <string name="title_activity_main">UD Beacons</string>
 
+    <!-- Strings related to registry -->
+    <string name="error_different_password">Las contraseñas no coinciden</string>
+    <string name="error_empty_name">Indique su nombre</string>
+    <string name="error_empty_lastname">Indique su apellido</string>
+    <string name="error_empty_id">Indique su número de identificación</string>
+    <string name="error_empty_externalID">Indique su código de estudiante</string>
+    <string name="error_invalid_id">Número de identificación inválido</string>
+    <string name="error_invalid_externalID">Código de estudiante inválido</string>
+
+    <!-- Strings related to registry -->
+    <string name="prompt_password2">Repite la clave</string>
+    <string name="prompt_user_id">Cédula</string>
+    <string name="prompt_user_external_code">Código de estudiante</string>
+    <string name="prompt_registry_name">Nombre(s)</string>
+    <string name="prompt_registry_lastname">Apellido(s)</string>
+    <string name="registry_fail">Fallo registro: </string>
+    <string name="registry_general_error">Error general en proceso de registro</string>
+    <string name="registry_ok">Registro exitoso</string>
+
     <!-- Strings related to Exceptions -->
     <string name="login_general_error">Error general en proceso de autenticación</string>
     <string name="failed_com_to_server">Fallo de comunicación con el servidor. Por favor inténtelo después</string>
@@ -43,8 +62,8 @@
     <string name="titleQueries">Consultas</string>
     <string name="action_settings">Configuraciones</string>
     <string name="schedule">Horario</string>
-    <string name="directory">Directorio Universitario</string>
-    <string name="uWebsite">www.udistrital.edu.co</string>
+    <string name="directory">Directorio UD</string>
+    <string name="uWebsite">Sitio Web UD</string>
     <string name="home">Inicio</string>
     <string name="social">Social</string>
     <string name="fb">Facebook</string>
@@ -56,9 +75,9 @@
     <string name="exit">Salir</string>
 
     <!-- Menu IDs -->
-    <string name="fb_id">fb</string>
-    <string name="twitter_id">twitter</string>
-    <string name="ldn_id">linkedin</string>
+    <string name="fb_id">Facebook</string>
+    <string name="twitter_id">Twitter</string>
+    <string name="ldn_id">LinkedIn</string>
 
     <!-- Strings days of week -->
     <string name="monday">Lunes</string>
@@ -89,7 +108,12 @@
     <!-- Beacons management -->
     <string name="key_zone_classroom">classroom</string>
     <string name="value_zone_classroom">C302</string>
+    <string name="key_zone_university">university_zone</string>
+    <string name="value_zone_university">ENTRADA</string>
     <string name="channel_name">BeaconsNotif</string>
     <string name="channel_description">Notificaciones a partir de beacons</string>
+    <string name="registry">Regístrate</string>
+    <string name="attendance_ok">Hemos registrado su asistencia a la clase</string>
+    <string name="attendance_error">Fallo registranddo su asistencia a la clase</string>
 
 </resources>

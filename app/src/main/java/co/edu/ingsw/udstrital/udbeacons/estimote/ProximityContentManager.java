@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -30,7 +31,7 @@ public class ProximityContentManager {
     private Context context;
     private EstimoteCloudCredentials cloudCredentials;
     private ProximityObserver.Handler proximityObserverHandler;
-    private static final String WS_NOTIFICATIONS_URL = "http://192.168.0.5:8080/UDBeaconServices/services/notificationsService/getNotifications";
+    private static final String WS_NOTIFICATIONS_URL = "http://35.231.239.50:8080/UDBeaconServices/services/notificationsService/getNotifications";
     private static String email;
     public boolean isActive;
     private SharedPreferences sharedPref;
@@ -57,7 +58,7 @@ public class ProximityContentManager {
                     .withBalancedPowerMode()
                     .build();
 
-            ProximityZone zone = proximityObserver.zoneBuilder()
+            ProximityZone zoneClassRoom = proximityObserver.zoneBuilder()
                     .forAttachmentKeyAndValue(context.getString(R.string.key_zone_classroom),
                             context.getString(R.string.value_zone_classroom))
                     .inNearRange()
@@ -65,11 +66,8 @@ public class ProximityContentManager {
                         @Override
                         public Unit invoke(ProximityAttachment attachment) {
                             Log.d(context.getString(R.string.app_name),
-                                    "Welcome to classroom "+
+                                    "Hellot to the classroom "+
                                             attachment.getPayload().get(context.getString(R.string.key_zone_classroom)));
-                            Log.d(context.getString(R.string.app_name),
-                                    "BeaconUID: "+attachment.getDeviceId());
-                            sendInfoToServer(attachment.getDeviceId());
                             return null;
                         }
                     })
@@ -84,7 +82,26 @@ public class ProximityContentManager {
                     })
                     .create();
 
-            proximityObserver.addProximityZone(zone);
+            ProximityZone zoneUniversity = proximityObserver.zoneBuilder()
+                    .forAttachmentKeyAndValue(context.getString(R.string.key_zone_university),
+                            context.getString(R.string.value_zone_university))
+                    .inNearRange()
+                    .withOnEnterAction(new Function1<ProximityAttachment, Unit>() {
+                        @Override
+                        public Unit invoke(ProximityAttachment attachment) {
+                            Log.d(context.getString(R.string.app_name),
+                                    "Welcome to classroom "+
+                                            attachment.getPayload().get(context.getString(R.string.key_zone_classroom)));
+                            Log.d(context.getString(R.string.app_name),
+                                    "BeaconUID: "+attachment.getDeviceId());
+                            sendInfoToServer(attachment.getDeviceId());
+                            return null;
+                        }
+                    })
+                    .create();
+
+            proximityObserver.addProximityZone(zoneClassRoom);
+            proximityObserver.addProximityZone(zoneUniversity);
 
             proximityObserverHandler = proximityObserver.start();
         }catch (Exception e){
@@ -102,6 +119,13 @@ public class ProximityContentManager {
 
     private void sendInfoToServer(final String beaconID){
         if(email != null && !email.isEmpty()) {
+            JSONObject js = new JSONObject();
+            try {
+                js.put("beacon_id", beaconID);
+                js.put("user", email);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                     (Request.Method.POST, WS_NOTIFICATIONS_URL, null, new Response.Listener<JSONObject>() {
                         @Override
@@ -126,6 +150,12 @@ public class ProximityContentManager {
                     params.put("beacon_id", beaconID);
                     params.put("email", email);
                     return params;
+                }
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    HashMap<String, String> headers = new HashMap<String, String>();
+                    headers.put("Content-Type", "application/json; charset=utf-8");
+                    return headers;
                 }
             };
             RequestQueue requestQueue = Volley.newRequestQueue(context);
